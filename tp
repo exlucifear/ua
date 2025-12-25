@@ -1,0 +1,107 @@
+--// Load WindUI
+local WindUI = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
+))()
+
+--// Services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+--// UI Window
+local Window = WindUI:CreateWindow({
+    Title = "Auto Teleport System",
+    Icon = "map-pin",
+    Author = "ChatGPT",
+    Folder = "AutoTeleport",
+    Size = UDim2.fromOffset(500, 400),
+    Theme = "Dark"
+})
+
+local Tab = Window:Tab({
+    Title = "Teleport",
+    Icon = "map"
+})
+
+--// Variables
+local savedPositions = {
+    [1] = nil,
+    [2] = nil,
+    [3] = nil
+}
+
+local teleportDelay = 60
+local running = false
+
+--// Helper function
+local function teleportTo(cf)
+    if HumanoidRootPart and cf then
+        HumanoidRootPart.CFrame = cf
+    end
+end
+
+--// Save Position Buttons
+for i = 1, 3 do
+    Tab:Button({
+        Title = "Save Position "..i,
+        Description = "Simpan posisi karakter saat ini",
+        Callback = function()
+            savedPositions[i] = HumanoidRootPart.CFrame
+            WindUI:Notify({
+                Title = "Saved",
+                Content = "Posisi "..i.." berhasil disimpan!",
+                Duration = 2
+            })
+        end
+    })
+end
+
+--// Delay Input
+Tab:Input({
+    Title = "Teleport Delay (menit)",
+    Placeholder = "contoh: 60",
+    Numeric = true,
+    Callback = function(value)
+        teleportDelay = tonumber(value) or 60
+    end
+})
+
+--// Start Teleport
+Tab:Toggle({
+    Title = "Start Auto Teleport",
+    Default = false,
+    Callback = function(state)
+        running = state
+        task.spawn(function()
+            while running do
+                for i = 1, 3 do
+                    if not running then break end
+                    if savedPositions[i] then
+                        teleportTo(savedPositions[i])
+                        task.wait(teleportDelay)
+                    end
+                end
+            end
+        end)
+    end
+})
+
+--// Manual Teleport Buttons
+for i = 1, 3 do
+    Tab:Button({
+        Title = "Teleport ke Posisi "..i,
+        Callback = function()
+            if savedPositions[i] then
+                teleportTo(savedPositions[i])
+            else
+                WindUI:Notify({
+                    Title = "Error",
+                    Content = "Posisi "..i.." belum disimpan!",
+                    Duration = 2
+                })
+            end
+        end
+    })
+end
