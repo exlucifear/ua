@@ -64,9 +64,11 @@ Tab:Input({
     Placeholder = "contoh: 60",
     Numeric = true,
     Callback = function(value)
-        teleportDelay = tonumber(value) or 60
+        local minutes = tonumber(value) or 60
+        teleportDelay = minutes * 60 -- konversi ke detik
     end
 })
+
 
 --// Start Teleport
 Tab:Toggle({
