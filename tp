@@ -20,23 +20,6 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark"
 })
 
---// Keybind System
-local UserInputService = game:GetService("UserInputService")
-local toggleKey = Enum.KeyCode.K -- ganti sesuai keinginan
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == toggleKey then
-        running = not running
-
-        WindUI:Notify({
-            Title = "Auto Teleport",
-            Content = running and "AKTIF" or "NONAKTIF",
-            Duration = 2
-        })
-    end
-end)
-
 
 local Tab = Window:Tab({
     Title = "Teleport",
