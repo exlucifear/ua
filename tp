@@ -20,11 +20,25 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark"
 })
 
+--// Toggle UI with Keybind
+local UserInputService = game:GetService("UserInputService")
+local uiVisible = true
+local toggleKey = Enum.KeyCode.RightShift -- bisa diganti
+
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == toggleKey then
+        uiVisible = not uiVisible
+        Window:SetVisible(uiVisible)
+    end
+end)
+
 
 local Tab = Window:Tab({
     Title = "Teleport",
     Icon = "map"
 })
+
 
 --// Variables
 local savedPositions = {
